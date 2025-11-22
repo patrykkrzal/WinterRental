@@ -17,6 +17,9 @@ namespace WinterRental.Models
         [Required]
         public Boolean Was_It_Returned { get; set; }  
         public ICollection<Order> Orders { get; set; }
-         
+        public ICollection<OrderedItem> OrderedItems { get; set; } = new List<OrderedItem>();
+
+
+
     }
 }

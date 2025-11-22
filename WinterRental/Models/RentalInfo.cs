@@ -13,7 +13,7 @@ namespace WinterRental.Models
         public string Address { get; set; }
         [MaxLength(9)]
         public string PhoneNumber { get; set; }
-        [MaxLength(255)]
+        [MaxLength(255)] 
         public string OpenDays { get; set; }
         [MaxLength(255)]
         public string Email { get; set; } 

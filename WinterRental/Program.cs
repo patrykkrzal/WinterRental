@@ -1,24 +1,47 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 using WinterRental;
 using WinterRental.Data;
+using WinterRental.Interfaces;
+using WinterRental.Ropository;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IRentalInfoRepository, RentalInfoRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-}
-    );
+builder.Services.AddDbContext<DataContext>();
 
 
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
+// Minimal API endpoint for users
+app.MapGet("/api/users", async (DataContext context) =>
+{
+    return await context.Users.ToListAsync();
+});
 
 if (args.Length == 1 && args[0].ToLower() == "seeddata")
     SeedData(app);
@@ -42,10 +65,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Serve default files (like index.html) and static files from wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
+// Enable routing and authorization
+app.UseRouting();
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
+
+// Fallback to index.html for SPA routes
+app.MapFallbackToFile("index.html");
 
 app.Run();
