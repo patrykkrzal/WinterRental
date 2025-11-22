@@ -19,98 +19,122 @@ namespace WinterRental
         {
             if (!dataContext.Users.Any())
             {
-                var rentalInfos = new List<RentalInfo>()
+                var rentalInfo = new RentalInfo()
                 {
-                    new RentalInfo()
-                    {
-                        OpenHour = new TimeSpan(8, 0, 0),
-                        CloseHour = new TimeSpan(18, 0, 0),
-                        Address = "ul. Centralna 1",
-                        PhoneNumber = "123456789",
-                        OpenDays = "Mon-Fri",
-                        Email = "info@rental.com",
-
-                        Users = new List<User>()
-                        {
-                            new User()
-                            {
-                                First_name = "Paweł",
-                                Last_name = "Kowalski",
-                                Email = "pawel@example.com",
-                                Phone_number = "111222333",
-                                Address = "ul. Przykładowa 1",
-                                Role = "user"
-                            },
-                            new User()
-                            {
-                                First_name = "Anna",
-                                Last_name = "Nowak",
-                                Email = "anna@example.com",
-                                Phone_number = "444555666",
-                                Address = "ul. Przykładowa 2",
-                                Role = "user"
-                            }
-                        },
-
-                        Workers = new List<Worker>()
-                        {
-                            new Worker()
-                            {
-                                First_name = "Jan",
-                                Last_name = "Kowal",
-                                Email = "jan@example.com",
-                                Phone_number = "777888999",
-                                Role = "administrator",
-                                WorkStart = new TimeSpan(8, 0, 0),
-                                WorkEnd = new TimeSpan(16, 0, 0),
-                                Working_Days = "Mon-Fri",
-                                Job_Title = "Manager"
-                            },
-                            new Worker()
-                            {
-                                First_name = "Ewa",
-                                Last_name = "Zielińska",
-                                Email = "ewa@example.com",
-                                Phone_number = "222333444",
-                                Role = "worker",
-                                WorkStart = new TimeSpan(10, 0, 0),
-                                WorkEnd = new TimeSpan(18, 0, 0),
-                                Working_Days = "Mon-Fri",
-                                Job_Title = "Cashier"
-                            }
-                        },
-
-                        Equipment = new List<Equipment>()
-                        {
-                            new Equipment()
-                            {
-                                size = "M",
-                                Is_In_Werehouse = true,
-                                Price = 100
-                            },
-                            new Equipment()
-                            {
-                                size = "L",
-                                Is_In_Werehouse = true,
-                                Price = 150
-                            }
-                        },
-
-                        Orders = new List<Order>()
-                        {
-                            new Order()
-                            {
-                                Rented_Items = "Equipment 1",
-                                OrderDate = DateTime.Now,
-                                price = 100,
-                                Date_Of_submission = DateOnly.FromDateTime(DateTime.Now),
-                                Was_It_Returned = false
-                            }
-                        }
-                    }
+                    OpenHour = new TimeSpan(8, 0, 0),
+                    CloseHour = new TimeSpan(18, 0, 0),
+                    Address = "ul. Centralna1",
+                    PhoneNumber = "123456789",
+                    OpenDays = "Mon-Fri",
+                    Email = "info@rental.com",
+                    Users = new List<User>(),
+                    Workers = new List<Worker>(),
+                    Equipment = new List<Equipment>(),
+                    Orders = new List<Order>()
                 };
 
-                dataContext.RentalInfo.AddRange(rentalInfos);
+                // Users
+                var user1 = new User()
+                {
+                    First_name = "Paweł",
+                    Last_name = "Kowalski",
+                    Email = "pawel@example.com",
+                    Phone_number = "111222333",
+                    Address = "ul. Przykładowa1",
+                    Role = "user",
+                    RentalInfo = rentalInfo,
+                    Orders = new List<Order>()
+                };
+
+                var user2 = new User()
+                {
+                    First_name = "Anna",
+                    Last_name = "Nowak",
+                    Email = "anna@example.com",
+                    Phone_number = "444555666",
+                    Address = "ul. Przykładowa2",
+                    Role = "user",
+                    RentalInfo = rentalInfo,
+                    Orders = new List<Order>()
+                };
+
+                rentalInfo.Users.Add(user1);
+                rentalInfo.Users.Add(user2);
+
+                // Workers
+                var worker1 = new Worker()
+                {
+                    First_name = "Jan",
+                    Last_name = "Kowal",
+                    Email = "jan@example.com",
+                    Phone_number = "777888999",
+                    Address = "ul. Działkowa3",
+                    Role = "administrator",
+                    WorkStart = new TimeSpan(8, 0, 0),
+                    WorkEnd = new TimeSpan(16, 0, 0),
+                    Working_Days = "Mon-Fri",
+                    Job_Title = "Manager",
+                    RentalInfo = rentalInfo
+                };
+
+                var worker2 = new Worker()
+                {
+                    First_name = "Ewa",
+                    Last_name = "Zielińska",
+                    Email = "ewa@example.com",
+                    Phone_number = "222333444",
+                    Address = "ul. Kwiatowa5",
+                    Role = "worker",
+                    WorkStart = new TimeSpan(10, 0, 0),
+                    WorkEnd = new TimeSpan(18, 0, 0),
+                    Working_Days = "Mon-Fri",
+                    Job_Title = "Cashier",
+                    RentalInfo = rentalInfo
+                };
+
+                rentalInfo.Workers.Add(worker1);
+                rentalInfo.Workers.Add(worker2);
+
+                // Equipment
+                var eq1 = new Equipment()
+                {
+                    size = "M",
+                    Is_In_Werehouse = true,
+                    Price = 100m,
+                    RentalInfo = rentalInfo,
+                    OrderedItems = new List<OrderedItem>()
+                };
+
+                var eq2 = new Equipment()
+                {
+                    size = "L",
+                    Is_In_Werehouse = true,
+                    Price = 150m,
+                    RentalInfo = rentalInfo,
+                    OrderedItems = new List<OrderedItem>()
+                };
+
+                rentalInfo.Equipment.Add(eq1);
+                rentalInfo.Equipment.Add(eq2);
+
+                // Orders
+                var order1 = new Order()
+                {
+                    Rented_Items = "Equipment1",
+                    OrderDate = DateTime.Now,
+                    price = 100m,
+                    Date_Of_submission = DateOnly.FromDateTime(DateTime.Now),
+                    Was_It_Returned = false,
+                    OrderedItems = new List<OrderedItem>(),
+                    Orders = new List<Order>()
+                };
+
+                // attach order to a user and to rental info
+                order1.Orders.Add(order1); // keep existing structure, though unusual
+                rentalInfo.Orders.Add(order1);
+                user1.Orders.Add(order1);
+
+                dataContext.RentalInfo.Add(rentalInfo);
                 dataContext.SaveChanges();
             }
         }
